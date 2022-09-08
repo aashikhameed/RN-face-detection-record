@@ -57,7 +57,7 @@ const App = () => {
     }
     console.log('Face Detected', Math.round(data[0]?.yawAngle));
 
-    let checked = {};
+    let checked = null;
     if (
       Math.round(data[0]?.yawAngle) >= -1 &&
       Math.round(data[0]?.yawAngle) <= -0
@@ -79,7 +79,7 @@ const App = () => {
     if (Math.round(data[0]?.yawAngle) >= 36) {
       checked = 'leftRecognized';
     }
-    if (Object.keys(checked).length > 0 && !faceValuesRef.current[checked]) {
+    if (checked && !faceValuesRef.current[checked]) {
       faceValuesRef.current = {
         ...faceValuesRef.current,
         [checked]: true,
