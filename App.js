@@ -7,7 +7,14 @@
  */
 
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {ActivityIndicator, Alert, Button, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Button,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {runOnJS} from 'react-native-reanimated';
 
 import {
@@ -23,6 +30,7 @@ const App = () => {
   const faceValuesRef = useRef({}); // use this to stop multiple state updation within secs
   const [isRecording, setIsRecording] = useState(false);
   const isUserStoppedRef = useRef(false);
+  const [cameraPermission, setCameraPermission] = useState(false);
 
   const devices = useCameraDevices();
   const frontCamera = devices.front;
@@ -34,9 +42,10 @@ const App = () => {
   }, [faceRecVal]);
 
   useEffect(() => {
-    Camera.requestCameraPermission().then(res => {
-      // setCameraEnabled(true);
-    });
+    (async () => {
+      const status = await Camera.requestCameraPermission();
+      setCameraPermission(status === 'authorized');
+    })();
     return () => {
       // unmount
       stopRecording();
@@ -152,6 +161,9 @@ const App = () => {
     return <ActivityIndicator />;
   }
 
+  if (!cameraPermission) {
+    return <Text>Enable camera permission</Text>;
+  }
   return (
     <View style={styles.flex}>
       <Camera
